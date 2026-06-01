@@ -1,0 +1,65 @@
+<view class="header-bg">
+  <view class="header-content">
+    <text class="header-icon">📖</text>
+    <text class="header-title">桂乡故事</text>
+    <text class="header-sub">讲好咸宁故事 · 传播桂乡声音</text>
+  </view>
+</view>
+
+<view class="list-wrap">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading && dataList.length === 0}}" class="loading-text">加载中...</view>
+
+  <!-- 错误状态 -->
+  <view wx:elif="{{loadError && dataList.length === 0}}" class="empty-state">
+    <text>桂香暂歇，下拉刷新试试</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{!loading && dataList.length === 0}}" class="empty-state">
+    <text class="empty-icon">📖</text>
+    <text>一树桂花一树诗</text>
+    <text class="hint">分享你眼中的咸宁</text>
+  </view>
+
+  <!-- 故事列表 -->
+  <view wx:for="{{dataList}}" wx:key="_id" class="story-card" bindtap="goDetail" data-id="{{item}}">
+    <view class="card-top">
+      <view class="story-title">{{item.title}}</view>
+    </view>
+    <view class="card-divider"></view>
+    <view class="story-content">{{item.content}}</view>
+    <view class="card-bottom">
+      <view class="story-meta">
+        <text wx:if="{{item.author}}" class="story-author">👤 {{item.author}}</text>
+        <text wx:if="{{item.location}}" class="story-location">📍 {{item.location}}</text>
+      </view>
+      <view class="story-time">{{item.sendTime}}</view>
+    </view>
+    <view class="delete-btn" wx:if="{{openid==item._openid}}" bindtap="deleteItem" data-t="{{item}}" catchtap>删除</view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view wx:if="{{loading && dataList.length > 0}}" class="loading-text">加载更多...</view>
+</view>
+
+<!-- 浮动发布按钮 -->
+<view class="fab" bindtap="send">
+  <text class="fab-icon">✏️</text>
+  <text class="fab-text">分享故事</text>
+</view>
+
+<!-- 发布弹窗 -->
+<view wx:if="{{isSend}}" class="modal-mask" bindtap="close"></view>
+<view wx:if="{{isSend}}" class="modal-box">
+  <view class="modal-header">📖 分享桂乡故事</view>
+  <view class="modal-body">
+    <input placeholder="故事标题" bindinput="onTitleInput" class="modal-input" />
+    <textarea placeholder="写下你眼中的咸宁…&#10;也许是一棵桂花树，也许是温泉边的故事" bindinput="onContentInput" class="modal-textarea-story"></textarea>
+    <input placeholder="发生在哪儿（可选）" bindinput="onLocationInput" class="modal-input" />
+  </view>
+  <view class="modal-footer">
+    <view class="modal-btn modal-btn-cancel" bindtap="close">取消</view>
+    <view class="modal-btn modal-btn-confirm" bindtap="publish">发布</view>
+  </view>
+</view>

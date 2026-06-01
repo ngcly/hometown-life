@@ -1,0 +1,69 @@
+<!-- 信息类型筛选标签 -->
+<scroll-view scroll-x class="type-bar" show-scrollbar="{{false}}">
+  <view wx:for="{{types}}" wx:key="key" class="type-tab {{item.key === currentType ? 'active' : ''}}"
+        data-type="{{item.key}}" bindtap="switchType">
+    {{item.icon}} {{item.label}}
+  </view>
+</scroll-view>
+
+<!-- 加载状态 -->
+<view wx:if="{{loading && dataList.length === 0}}" class="loading-text">加载中...</view>
+
+<!-- 错误状态 -->
+<view wx:elif="{{loadError && dataList.length === 0}}" class="empty-state">
+  <text class="empty-icon">😵</text>
+  <text>桂香暂歇</text>
+  <text class="hint">下拉刷新试试</text>
+</view>
+
+<!-- 空状态 -->
+<view wx:elif="{{!loading && dataList.length === 0}}" class="empty-state">
+  <text class="empty-icon">📭</text>
+  <text>桂乡风暖，暂无{{currentType === 'all' ? '新' : ''}}信息</text>
+  <text class="hint">点击下方按钮发布信息</text>
+</view>
+
+<!-- 信息卡片列表 -->
+<view wx:for="{{dataList}}" wx:key="_id" class="plaza-card" bindtap="go" data-id="{{item}}">
+  <!-- 封面大图 -->
+  <view wx:if="{{item.fileIDs && item.fileIDs.length > 0}}" class="card-cover-wrap">
+    <image class="card-cover" src="{{item.fileIDs[0]}}" mode="aspectFill" />
+  </view>
+  <view wx:elif="{{item._type === 'food' || item._type === 'travel' || item._type === 'amusement' || item._type === 'zufang' || item._type === 'story'}}" class="card-cover-placeholder">
+    {{item._type === 'food' ? '🍜' : item._type === 'travel' ? '🏔️' : item._type === 'amusement' ? '🎬' : item._type === 'zufang' ? '🏠' : '📖'}} 暂无图片
+  </view>
+
+  <!-- 类型角标 -->
+  <view class="card-badge" style="background: {{item._color}}">{{item._label}}</view>
+
+  <!-- 信息区域 -->
+  <view class="card-body">
+    <view class="card-title">{{item.name || item.title || item.gangwei || item.to}}</view>
+
+    <view class="card-meta-row">
+      <text wx:if="{{item.price || item.daiyu}}" class="card-price">{{item.price || item.daiyu}}</text>
+      <text wx:elif="{{item.shijian}}" class="card-info-text">🕐 {{item.shijian}}</text>
+      <text wx:elif="{{item.didian}}" class="card-info-text">📍 {{item.didian}}</text>
+    </view>
+
+    <view wx:if="{{item.info || item.neirong}}" class="card-desc">{{item.info || item.neirong}}</view>
+
+    <view class="card-footer">
+      <view class="card-user">
+        <image wx:if="{{item.touxiang}}" class="card-avatar" src="{{item.touxiang}}" />
+        <text class="card-username">{{item.userName || item.pName || item.writer || item.pName || '匿名'}}</text>
+        <text class="card-time">{{item.sendTime || ''}}</text>
+      </view>
+      <view wx:if="{{openid==item._openid}}" class="card-delete" bindtap="delete" data-t="{{item}}" catchtap>删除</view>
+    </view>
+  </view>
+</view>
+
+<!-- 加载更多 -->
+<view wx:if="{{loading && dataList.length > 0}}" class="loading-text">加载更多...</view>
+
+<!-- 浮动发布按钮 -->
+<view class="fab" bindtap="send">
+  <text class="fab-icon">✏️</text>
+  <text class="fab-text">发布信息</text>
+</view>

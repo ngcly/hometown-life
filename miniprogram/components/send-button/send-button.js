@@ -1,0 +1,1 @@
+Component({properties:{icon:{type:String,value:'../../images/send.png'}},methods:{onTap(){this.triggerEvent('tap')}}})

@@ -1,0 +1,73 @@
+{
+  "lazyCodeLoading": "requiredComponents",
+  "pages": [
+    "pages/index/index",
+    "pages/plaza/plaza",
+    "pages/mine/mine",
+    "pages/detail/detail"
+  ],
+  "subPackages": [
+    {
+      "root": "packageService",
+      "pages": [
+        "services/services",
+        "publish/publish"
+      ]
+    },
+    {
+      "root": "packageSocial",
+      "pages": [
+        "dating/dating"
+      ]
+    },
+    {
+      "root": "packageLife",
+      "pages": [
+        "lost/lost",
+        "jobs/jobs",
+        "food/food",
+        "travel/travel",
+        "rent/rent"
+      ]
+    },
+    {
+      "root": "packageFun",
+      "pages": [
+        "search/search",
+        "entertainment/entertainment",
+        "story/story"
+      ]
+    }
+  ],
+  "tabBar": {
+    "color": "#9CA3AF",
+    "selectedColor": "#E8A33D",
+    "borderStyle": "white",
+    "backgroundColor": "#FFFFFF",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home1.png"
+      },
+      {
+        "pagePath": "pages/plaza/plaza",
+        "text": "广场",
+        "iconPath": "images/plaza.png",
+        "selectedIconPath": "images/plaza1.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "images/mine.png",
+        "selectedIconPath": "images/mine1.png"
+      }
+    ]
+  },
+  "window": {
+    "navigationBarBackgroundColor": "#E8A33D",
+    "navigationBarTextStyle": "white"
+  },
+  "sitemapLocation": "sitemap.json"
+}

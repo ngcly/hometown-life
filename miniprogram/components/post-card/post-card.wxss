@@ -1,0 +1,49 @@
+@import "../../styles/shared.wxss";
+
+/* Card container */
+.box{background:#fff;border-radius:20rpx;padding:25rpx;margin:20rpx 25rpx;position:relative;overflow:hidden;box-shadow:0 4rpx 16rpx rgba(0,0,0,.06)}
+
+/* Top row: title + price */
+.top{display:flex;justify-content:space-between;align-items:flex-start}
+.title{font-size:30rpx;font-weight:600;color:var(--text-primary,#333);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Divider line */
+.line{height:2rpx;background:#f0f0f0;margin:15rpx 0}
+
+/* Info text */
+.info{font-size:28rpx;color:var(--text-secondary,#666);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Image scroll area */
+.img_box{display:flex;flex-direction:row;margin-top:15rpx;white-space:nowrap}
+.img{width:200rpx;height:200rpx;border-radius:10rpx;margin-right:10rpx;flex-shrink:0}
+
+/* Bottom bar */
+.box_bottom{display:flex;justify-content:space-between;align-items:center;margin-top:15rpx}
+
+/* Delete button */
+.delete{font-size:26rpx;color:var(--danger,#e64340);padding:8rpx 16rpx;border:2rpx solid var(--danger,#e64340);border-radius:10rpx}
+
+/* Time text */
+.time{font-size:24rpx;color:var(--text-placeholder,#bbb)}
+
+/* Badge styles */
+.badge{position:absolute;top:0;left:0;padding:5rpx 15rpx;font-size:24rpx;color:white;border-radius:20rpx 0 20rpx 0;z-index:1}
+.badge-lost{background:#e64340}
+.badge-found{background:#07c160}
+.badge-biaobai,.badge-confessions{background:#ff6b9d}
+.badge-work,.badge-jobs{background:#00a8f3}
+
+/* Card type variants */
+.card-lost{border:3rpx solid #ffccc7}
+.card-found{border:3rpx solid #d4f7dc}
+.card-biaobai,.card-confessions{background:linear-gradient(135deg,#fff0f5,#ffe4e9)}
+.card-work,.card-jobs{border:3rpx solid var(--primary,#00a8f3)}
+
+/* Meta info line */
+.meta{font-size:26rpx;color:var(--text-secondary,#999);margin:5rpx 0}
+
+/* Price always red */
+.price{color:var(--danger,#e64340);line-height:60rpx}
+
+/* Time right-aligned */
+.time.right{text-align:right;display:block;margin-top:10rpx}

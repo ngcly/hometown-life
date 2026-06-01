@@ -1,0 +1,1 @@
+.send{width:300rpx;height:100rpx;position:fixed;margin:auto;bottom:80rpx;right:0;left:0}.send:active{width:262.5rpx;height:87.5rpx;bottom:86.25rpx}

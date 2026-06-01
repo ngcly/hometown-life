@@ -1,0 +1,15 @@
+@import "../../styles/shared.wxss";
+
+.box {
+  width: 80vw;
+  padding: 20rpx 5vw;
+  line-height: 60rpx;
+}
+
+.line {
+  left: -5vw;
+}
+
+.location {
+  color: var(--text-secondary, #6B7280);
+}

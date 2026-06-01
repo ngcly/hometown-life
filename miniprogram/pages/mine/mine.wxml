@@ -1,0 +1,112 @@
+<view class="profile-section">
+  <!-- 已登录状态：显示头像 + 昵称，点击可更换 -->
+  <view wx:if="{{login}}">
+    <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <image class="avatar" src="{{avatarUrl || '../../images/unlogin.png'}}"></image>
+    </button>
+    <!-- 展示昵称（文本，不受 input 自动填充影响） -->
+    <view wx:if="{{!editingNickname}}" class="nickname-display" bindtap="startEditNickname">
+      <text class="{{nickName ? 'nickname-text' : 'nickname-hint'}}">{{nickName || '点击设置昵称'}}</text>
+    </view>
+    <!-- 编辑昵称（弹出微信昵称选择） -->
+    <input wx:else type="nickname" class="nickname-input" placeholder="选择昵称" bindinput="onNicknameInput" bindblur="finishEditNickname" focus="{{true}}" />
+  </view>
+  <!-- 首次加载（极短暂） -->
+  <view wx:else>
+    <image class="avatar" src="../../images/unlogin.png"></image>
+    <view class="login-tip">加载中...</view>
+  </view>
+</view>
+
+<view class="menu-section">
+  <view class="menu-item" bindtap="toggleMyPosts">
+    <view class="menu-left">
+      <image src="../../images/send.png"></image>
+      <text>我的发布</text>
+    </view>
+    <image class="menu-arrow" src="{{fabu?down:right}}"></image>
+  </view>
+
+  <block wx:if="{{fabu}}">
+    <!-- 统计行 -->
+    <view class="stats-list">
+      <view class="stats-item">
+        <text>🏪 广场发布</text>
+        <text>{{items}}</text>
+      </view>
+      <view class="stats-item">
+        <text>🔍 失物发布</text>
+        <text>{{lost}}</text>
+      </view>
+      <view class="stats-item">
+        <text>📦 拾物发布</text>
+        <text>{{found}}</text>
+      </view>
+      <view class="stats-item">
+        <text>💌 表白</text>
+        <text>{{confessions}}</text>
+      </view>
+    </view>
+
+    <!-- 最近帖子列表 -->
+    <view wx:if="{{myPostsLoading}}" class="posts-loading">加载中...</view>
+    <view wx:elif="{{myPosts.length}}" class="my-posts">
+      <view class="posts-title">📋 最近发布</view>
+      <view wx:for="{{myPosts}}" wx:key="_id" class="post-item" bindtap="goPost" data-item="{{item}}">
+        <view class="post-label post-label-{{item._col}}">{{item._label}}</view>
+        <view class="post-info">
+          <text class="post-text">{{item[item._titleKey] || item.name || item.title || item.gangwei || item.to}}</text>
+          <text class="post-time">{{item.sendTime}}</text>
+        </view>
+        <view class="post-delete" catchtap="deletePost" data-item="{{item}}">删除</view>
+      </view>
+    </view>
+    <view wx:else class="posts-empty">还未发布过信息</view>
+  </block>
+
+  <!-- 更多功能 -->
+  <button class="menu-btn menu-btn-full" open-type="share">
+    <view class="menu-left">
+      <image src="../../images/wechat.png"></image>
+      <text>分享给好友</text>
+    </view>
+    <image class="menu-arrow" src="{{right}}"></image>
+  </button>
+
+  <view class="menu-item" bindtap="callService">
+    <view class="menu-left">
+      <image src="../../images/service_phone.png"></image>
+      <text>客服电话</text>
+    </view>
+    <image class="menu-arrow" src="{{right}}"></image>
+  </view>
+
+  <view class="menu-item" bindtap="showAbout">
+    <view class="menu-left">
+      <image src="../../images/home.png"></image>
+      <text>关于桂乡生活</text>
+    </view>
+    <image class="menu-arrow" src="{{right}}"></image>
+  </view>
+</view>
+
+<!-- 协议信息 -->
+<view class="menu-section policy-section">
+  <view class="menu-item" bindtap="showTerms">
+    <view class="menu-left">
+      <text class="policy-text">📄 用户协议</text>
+    </view>
+    <image class="menu-arrow" src="{{right}}"></image>
+  </view>
+  <view class="menu-item" bindtap="showPrivacy">
+    <view class="menu-left">
+      <text class="policy-text">🔒 隐私政策</text>
+    </view>
+    <image class="menu-arrow" src="{{right}}"></image>
+  </view>
+</view>
+
+<!-- 版本号 & 版权 -->
+<view class="footer-version">桂乡生活 v{{version}}</view>
+<view class="footer-copyright">© 2026 桂乡生活 咸宁本地生活圈</view>
+<view class="footer-copyright">开发者：LinChen</view>

@@ -1,0 +1,73 @@
+<view class="header-bg">
+  <view class="header-content">
+    <text class="header-icon">🏠</text>
+    <text class="header-title">房屋租售</text>
+    <text class="header-sub">在桂乡有个家</text>
+  </view>
+</view>
+
+<view class="list-wrap">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading && dataList.length === 0}}" class="loading-text">加载中...</view>
+
+  <!-- 错误状态 -->
+  <view wx:elif="{{loadError && dataList.length === 0}}" class="empty-state">
+    <text>桂香暂歇，下拉刷新试试</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{!loading && dataList.length === 0}}" class="empty-state">
+    <text class="empty-icon">🏡</text>
+    <text>桂乡有佳居，待君来寻觅</text>
+    <text class="hint">发布房源让更多人看到</text>
+  </view>
+
+  <!-- 房源列表 -->
+  <view wx:for="{{dataList}}" wx:key="_id" class="rent-card" bindtap="goDetail" data-id="{{item}}">
+    <view class="card-top">
+      <view class="rent-title">{{item.title}}</view>
+      <view wx:if="{{item.price}}" class="rent-price">{{item.price}}</view>
+    </view>
+    <view class="card-divider"></view>
+    <view class="rent-details">
+      <text wx:if="{{item.huxing}}" class="rent-tag">{{item.huxing}}</text>
+      <text wx:if="{{item.mianji}}" class="rent-tag">{{item.mianji}}</text>
+      <text wx:if="{{item.weizhi}}" class="rent-tag">📍 {{item.weizhi}}</text>
+    </view>
+    <view wx:if="{{item.info}}" class="rent-info">{{item.info}}</view>
+    <view class="card-bottom">
+      <view wx:if="{{item.lianxiren}}" class="rent-author">👤 {{item.lianxiren}}</view>
+      <view class="rent-time">{{item.sendTime}}</view>
+    </view>
+    <view class="delete-btn" wx:if="{{openid==item._openid}}" bindtap="deleteItem" data-t="{{item}}" catchtap>删除</view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view wx:if="{{loading && dataList.length > 0}}" class="loading-text">加载更多...</view>
+</view>
+
+<!-- 浮动发布按钮 -->
+<view class="fab" bindtap="send">
+  <text class="fab-icon">✏️</text>
+  <text class="fab-text">发布房源</text>
+</view>
+
+<!-- 发布弹窗 -->
+<view wx:if="{{isSend}}" class="modal-mask" bindtap="close"></view>
+<view wx:if="{{isSend}}" class="modal-box">
+  <view class="modal-header">🏠 发布房源</view>
+  <view class="modal-body">
+    <input placeholder="标题（如：温泉路两室一厅出租）" bindinput="onTitleInput" class="modal-input" />
+    <input placeholder="户型（如：3室2厅1卫）" bindinput="onLayoutInput" class="modal-input" />
+    <input placeholder="面积（如：120㎡）" bindinput="onAreaInput" class="modal-input" />
+    <input placeholder="租金/售价" bindinput="onPriceInput" class="modal-input" />
+    <input placeholder="位置" bindinput="onLocationInput" class="modal-input" />
+    <input placeholder="联系人" bindinput="onContactInput" class="modal-input" />
+    <input placeholder="联系电话" bindinput="onPhoneInput" class="modal-input" type="number" />
+    <textarea placeholder="其他描述..." bindinput="onInfoInput" class="modal-textarea"></textarea>
+  </view>
+  <view class="modal-footer">
+    <view class="modal-btn modal-btn-cancel" bindtap="close">取消</view>
+    <view class="modal-btn modal-btn-confirm" bindtap="publish">发布</view>
+  </view>
+</view>

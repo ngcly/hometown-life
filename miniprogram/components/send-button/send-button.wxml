@@ -1,0 +1,1 @@
+<image class="send" src="{{icon}}" mode="aspectFit" bindtap="onTap"></image>

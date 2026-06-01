@@ -1,0 +1,21 @@
+<view class="search-page">
+  <view class="search-bar">
+    <input placeholder="搜桂乡·寻好物·找工作" focus="true" bindinput="onSearchInput" class="search-input" />
+    <text class="search-cancel" bindtap="goBack">取消</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-text">搜索中...</view>
+
+  <view wx:elif="{{searched && results.length===0}}" class="empty-state">
+    <text>没有找到相关结果</text>
+    <text class="hint" wx:if="{{keyword}}">试试其他关键词</text>
+  </view>
+
+  <view wx:elif="{{results.length}}" class="results">
+    <block wx:for="{{results}}" wx:key="_id">
+      <post-card data="{{item}}" type="{{item._col}}" showDelete="{{false}}" bind:tap="goDetail" />
+    </block>
+    <view wx:if="{{hasMore}}" class="loading-text" bindtap="loadMore">加载更多</view>
+    <view wx:elif="{{searched && !hasMore && results.length>0}}" class="loading-text">— 没有更多了 —</view>
+  </view>
+</view>

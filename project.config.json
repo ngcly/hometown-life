@@ -1,0 +1,40 @@
+{
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "minify": true,
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "appid": "wxb69e7943c7c13395",
+  "projectname": "小程序设计",
+  "libVersion": "3.16.1",
+  "simulatorType": "wechat",
+  "simulatorPluginLibVersion": {},
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
+  "compileType": "miniprogram",
+  "condition": {
+    "miniprogram": {
+      "list": []
+    }
+  },
+  "srcMiniprogramRoot": "miniprogram/",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 4
+  }
+}

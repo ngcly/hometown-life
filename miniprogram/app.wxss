@@ -1,0 +1,57 @@
+/* ========================================
+   桂乡生活 - 全局设计系统 v2
+   配色 / 字体 / 阴影 / 圆角规范
+   ======================================== */
+
+page {
+  /* ---- 品牌色 ---- */
+  --primary: #E8A33D;
+  --primary-dark: #D4872B;
+  --primary-light: #FFF8E1;
+  --primary-gradient: linear-gradient(135deg, #E8A33D, #F5A623);
+
+  /* ---- 中性色 ---- */
+  --bg: #F5F6FA;
+  --card-bg: #FFFFFF;
+  --text-primary: #1A1A2E;
+  --text-secondary: #6B7280;
+  --text-placeholder: #9CA3AF;
+  --border: #F0F0F0;
+
+  /* ---- 桂乡特色色 ---- */
+  --gold: #F5A623;
+  --gold-light: #FFF8E1;
+  --gold-gradient: linear-gradient(135deg, #F5A623, #F7C948);
+
+  /* ---- 语义色 ---- */
+  --danger: #EF4444;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --love: #EC4899;
+
+  /* ---- 阴影（轻透干净） ---- */
+  --shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  --shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8rpx 30rpx rgba(0, 0, 0, 0.08);
+
+  /* ---- 字体系列（中文优先） ---- */
+  --font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+
+  /* ---- 字号系统 ---- */
+  --font-h1: 40rpx;
+  --font-h2: 34rpx;
+  --font-h3: 30rpx;
+  --font-body: 28rpx;
+  --font-caption: 24rpx;
+  --font-small: 22rpx;
+
+  /* ---- 行高 ---- */
+  --lh-tight: 1.2;
+  --lh-normal: 1.5;
+  --lh-loose: 1.8;
+
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-size: var(--font-body);
+  font-family: var(--font-family);
+}

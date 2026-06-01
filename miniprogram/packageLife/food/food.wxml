@@ -1,0 +1,63 @@
+<view class="header-bg">
+  <view class="header-content">
+    <text class="header-icon">🍜</text>
+    <text class="header-title">佳肴美馔</text>
+    <text class="header-sub">寻味咸宁 · 桂花糕里有故乡</text>
+  </view>
+</view>
+
+<view class="list-wrap">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading && dataList.length === 0}}" class="loading-text">加载中...</view>
+
+  <!-- 错误状态 -->
+  <view wx:elif="{{loadError && dataList.length === 0}}" class="empty-state">
+    <text>桂香暂歇，下拉刷新试试</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{!loading && dataList.length === 0}}" class="empty-state">
+    <text class="empty-icon">🍽️</text>
+    <text>温泉之乡，寻味咸宁</text>
+    <text class="hint">分享你心中的咸宁味道</text>
+  </view>
+
+  <!-- 美食列表 -->
+  <view wx:for="{{dataList}}" wx:key="_id" class="food-card" bindtap="goDetail" data-id="{{item}}">
+    <view class="card-top">
+      <view class="food-name">{{item.name}}</view>
+      <view wx:if="{{item.didian}}" class="food-location">📍 {{item.didian}}</view>
+    </view>
+    <view class="card-divider"></view>
+    <view class="food-info">{{item.info}}</view>
+    <view class="card-bottom">
+      <view wx:if="{{item.pName}}" class="food-author">👤 {{item.pName}}</view>
+      <view class="food-time">{{item.sendTime}}</view>
+    </view>
+    <view class="delete-btn" wx:if="{{openid==item._openid}}" bindtap="deleteItem" data-t="{{item}}" catchtap>删除</view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view wx:if="{{loading && dataList.length > 0}}" class="loading-text">加载更多...</view>
+</view>
+
+<!-- 浮动发布按钮 -->
+<view class="fab" bindtap="send">
+  <text class="fab-icon">✏️</text>
+  <text class="fab-text">推荐美食</text>
+</view>
+
+<!-- 发布弹窗 -->
+<view wx:if="{{isSend}}" class="modal-mask" bindtap="close"></view>
+<view wx:if="{{isSend}}" class="modal-box">
+  <view class="modal-header">🥟 推荐咸宁美食</view>
+  <view class="modal-body">
+    <input placeholder="美食/店铺名称" bindinput="onNameInput" class="modal-input" />
+    <input placeholder="地点（可选）" bindinput="onLocationInput" class="modal-input" />
+    <textarea placeholder="推荐理由… 如：桂花糕、贺胜鸡汤、通山包坨、赤壁鱼糕" bindinput="onInfoInput" class="modal-textarea"></textarea>
+  </view>
+  <view class="modal-footer">
+    <view class="modal-btn modal-btn-cancel" bindtap="close">取消</view>
+    <view class="modal-btn modal-btn-confirm" bindtap="publish">发布</view>
+  </view>
+</view>

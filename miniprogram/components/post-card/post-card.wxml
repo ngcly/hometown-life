@@ -1,0 +1,33 @@
+<view class="box card-{{type}}">
+  <!-- Badge for non-xianzhi types -->
+  <view class="badge badge-{{type}}" wx:if="{{type!=='items' && type!=='xianzhi'}}">
+    {{badgeText}}
+  </view>
+
+  <view class="top">
+    <view class="title">{{data.name || data.gangwei || data.to}}</view>
+    <view class="price" wx:if="{{data.price || data.daiyu}}">{{data.price || data.daiyu}}</view>
+  </view>
+
+  <view class="line"></view>
+
+  <view class="info"><text>{{data.info || data.neirong}}</text></view>
+
+  <!-- For work type: show company and location -->
+  <view wx:if="{{type==='work' && data.gongsi}}" class="meta">{{data.gongsi}}</view>
+  <view wx:if="{{data.didian}}" class="meta">📍 {{data.didian}}</view>
+
+  <!-- Images -->
+  <scroll-view wx:if="{{showImages && data.fileIDs && data.fileIDs.length}}" scroll-x="true" class="img_box">
+    <block wx:key="*this" wx:for="{{data.fileIDs}}">
+      <image class="img" src="{{item}}" mode="aspectFill"></image>
+    </block>
+  </scroll-view>
+
+  <!-- Bottom: delete + time, or just time -->
+  <view class="box_bottom" wx:if="{{showDelete}}">
+    <view class="delete" catchtap="onDelete">删除</view>
+    <view class="time">{{data.sendTime}}</view>
+  </view>
+  <view class="time right" wx:else>{{data.sendTime}}</view>
+</view>

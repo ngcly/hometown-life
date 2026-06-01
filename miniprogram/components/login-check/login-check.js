@@ -1,0 +1,1 @@
+Component({data:{logined:false},lifetimes:{attached(){wx.getStorage({key:'login',success:(res)=>{this.setData({logined:!!res.data});if(res.data)this.triggerEvent('logined')},fail:()=>{this.setData({logined:false})}})}}})

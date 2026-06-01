@@ -1,0 +1,66 @@
+<view wx:if="{{loading}}" class="loading-text">加载中...</view>
+
+<view wx:if="{{item}}" class="detail-card">
+  <view class="detail-title">{{item.name || item.gangwei || item.to}}</view>
+
+  <view class="detail-meta">
+    <view wx:if="{{item.price || item.daiyu}}">💰 价格：{{item.price || item.daiyu}}</view>
+    <view wx:if="{{item.pName || item.userName || item.writer}}">👤 发布者：{{item.pName || item.userName || item.writer}}</view>
+    <view wx:if="{{item.pCall}}">📞 电话：{{item.pCall}}</view>
+    <view wx:if="{{item.pWechat}}">💬 微信：{{item.pWechat}}</view>
+    <view wx:if="{{item.didian}}">📍 地点：{{item.didian}}</view>
+    <view wx:if="{{item.shijian}}">🕐 时间：{{item.shijian}}</view>
+    <view wx:if="{{item.neirong}}">📋 工作内容：{{item.neirong}}</view>
+    <view wx:if="{{item.to}}">✉️ To：{{item.to}}</view>
+  </view>
+
+  <view wx:if="{{item.info}}" class="detail-divider"></view>
+  <view wx:if="{{item.info}}" class="detail-meta" style="line-height:1.8;text-align:justify;">{{item.info}}</view>
+
+  <view class="detail-images" wx:if="{{item.fileIDs && item.fileIDs.length}}">
+    <block wx:key="*this" wx:for="{{item.fileIDs}}">
+      <image src="{{item}}" mode="aspectFill" bindtap="previewImg" data-img="{{item}}"></image>
+    </block>
+  </view>
+
+  <view class="contact-bar" wx:if="{{item.pCall || item.pWechat}}">
+    <button wx:if="{{item.pCall}}" bindtap="copyCall">📋 复制电话</button>
+    <button wx:if="{{item.pWechat}}" bindtap="copyWechat">💬 复制微信</button>
+  </view>
+
+  <view class="delete-btn" wx:if="{{openid==item._openid}}" bindtap="deleteItem">删除这条信息</view>
+</view>
+
+<!-- 评论区 -->
+<view class="comments-section">
+  <view class="comments-header">
+    <text class="comments-title">💬 评论</text>
+    <text class="comments-count">{{comments.length}}条评论</text>
+  </view>
+
+  <view wx:if="{{commentLoading}}" class="loading-text">加载评论中...</view>
+
+  <block wx:elif="{{comments.length}}">
+    <view wx:for="{{comments}}" wx:key="_id" class="comment-item">
+      <view class="comment-avatar">
+        <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}"></image>
+        <text wx:else class="avatar-placeholder">{{item.nickName.slice(0,1)}}</text>
+      </view>
+      <view class="comment-body">
+        <view class="comment-top">
+          <text class="comment-nickname">{{item.nickName}}</text>
+          <text class="comment-time">{{formatCommentTime(item.createTime)}}</text>
+        </view>
+        <text class="comment-content">{{item.content}}</text>
+      </view>
+    </view>
+  </block>
+
+  <view wx:else class="comment-empty">暂无评论，来第一个发言吧</view>
+</view>
+
+<!-- 评论输入框 -->
+<view class="comment-input-bar">
+  <input class="comment-input" placeholder="说点什么..." value="{{commentText}}" bindinput="onCommentInput" />
+  <button class="comment-submit" bindtap="submitComment">发送</button>
+</view>

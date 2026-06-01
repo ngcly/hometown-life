@@ -1,0 +1,72 @@
+<view class="all">
+  <!-- 桂花装饰 -->
+  <view class="osmanthus-deco">
+    <text class="osmanthus-flower">✦</text>
+    <text class="osmanthus-flower">✦</text>
+    <text class="osmanthus-flower">✦</text>
+    <text class="osmanthus-flower">✦</text>
+    <text class="osmanthus-flower">✦</text>
+  </view>
+
+  <!-- 季节问候 -->
+  <view class="season-greeting">
+    <text class="greeting-icon">{{greetingIcon}}</text>
+    <text class="greeting-text">{{greeting}}</text>
+  </view>
+
+  <!-- 搜索入口 -->
+  <view class="search-entry" bindtap="goSearch">
+    <text class="search-icon">🔍</text>
+    <text class="search-placeholder">搜桂乡·寻好物·找工作</text>
+  </view>
+
+  <!-- 轮播图（卡片式横向布局） -->
+  <swiper class="banner-swiper" autoplay indicator-dots interval="3000" circular='true'>
+    <swiper-item wx:for="{{slides}}" wx:key="id">
+      <view class="slide-bg" style="background: {{item.bg}};">
+        <view class="slide-left">
+          <text class="slide-title">{{item.title}}</text>
+          <text class="slide-subtitle">{{item.subtitle}}</text>
+          <view class="slide-tags">
+            <text wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="slide-tag">{{tag}}</text>
+          </view>
+        </view>
+        <text class="slide-icon">{{item.icon}}</text>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <!-- 快捷功能入口（九宫格） -->
+  <view class="quick-grid">
+    <navigator wx:for="{{quickEntries}}" wx:key="name" url="{{item.url}}" class="quick-item">
+      <view class="quick-icon-wrap" style="background: {{item.bgColor}};">
+        <image src="{{item.icon}}"></image>
+      </view>
+      <text>{{item.name}}</text>
+    </navigator>
+  </view>
+
+  <!-- 最新动态 -->
+  <view class="feed-section">
+    <view class="feed-header">
+      <text class="feed-title">⟡ 桂乡新鲜事</text>
+      <navigator url="../../pages/plaza/plaza" class="feed-more">查看更多 ›</navigator>
+    </view>
+
+    <view wx:if="{{feedLoading}}" class="feed-loading">加载中...</view>
+
+    <block wx:elif="{{feed.length}}">
+      <block wx:for="{{feed}}" wx:key="_id">
+        <view class="feed-item" bindtap="goFeedDetail" data-item="{{item}}">
+          <view class="feed-label feed-label-{{item._col}}">{{item._label}}</view>
+          <view class="feed-content">
+            <text class="feed-text">{{item.name || item.gangwei || item.to || item.info}}</text>
+            <text class="feed-time">{{item.sendTime}}</text>
+          </view>
+        </view>
+      </block>
+    </block>
+
+    <view wx:else class="feed-empty">桂香满城，静待佳音</view>
+  </view>
+</view>

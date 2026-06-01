@@ -1,0 +1,56 @@
+<view class="header-bg">
+  <view class="header-content">
+    <text class="header-icon">🎬</text>
+    <text class="header-title">观影吊嗓</text>
+    <text class="header-sub">桂乡休闲 · 好戏连台</text>
+  </view>
+</view>
+
+<view class="list-wrap">
+  <view wx:if="{{loading && dataList.length === 0}}" class="loading-text">加载中...</view>
+
+  <view wx:elif="{{loadError && dataList.length === 0}}" class="empty-state">
+    <text>桂香暂歇，下拉刷新试试</text>
+  </view>
+
+  <view wx:elif="{{!loading && dataList.length === 0}}" class="empty-state">
+    <text class="empty-icon">🎤</text>
+    <text>金桂银桂次第开</text>
+    <text class="hint">发布活动丰富桂乡生活</text>
+  </view>
+
+  <view wx:for="{{dataList}}" wx:key="_id" class="card" bindtap="goDetail" data-id="{{item}}">
+    <view class="card-name">{{item.name}}</view>
+    <view wx:if="{{item.shijian}}" class="card-meta">🕐 {{item.shijian}}</view>
+    <view wx:if="{{item.didian}}" class="card-meta">📍 {{item.didian}}</view>
+    <view wx:if="{{item.info}}" class="card-divider"></view>
+    <view wx:if="{{item.info}}" class="card-info">{{item.info}}</view>
+    <view class="card-bottom">
+      <view wx:if="{{item.pName}}" class="card-author">👤 {{item.pName}}</view>
+      <view class="card-time">{{item.sendTime}}</view>
+    </view>
+    <view class="delete-btn" wx:if="{{openid==item._openid}}" bindtap="deleteItem" data-t="{{item}}" catchtap>删除</view>
+  </view>
+
+  <view wx:if="{{loading && dataList.length > 0}}" class="loading-text">加载更多...</view>
+</view>
+
+<view class="fab" bindtap="send">
+  <text class="fab-icon">✏️</text>
+  <text class="fab-text">发布活动</text>
+</view>
+
+<view wx:if="{{isSend}}" class="modal-mask" bindtap="close"></view>
+<view wx:if="{{isSend}}" class="modal-box">
+  <view class="modal-header">🎬 发布娱乐活动</view>
+  <view class="modal-body">
+    <input placeholder="活动名称" bindinput="onNameInput" class="modal-input" />
+    <input placeholder="时间（可选）" bindinput="onTimeInput" class="modal-input" />
+    <input placeholder="地点（可选）" bindinput="onLocationInput" class="modal-input" />
+    <textarea placeholder="活动描述..." bindinput="onInfoInput" class="modal-textarea"></textarea>
+  </view>
+  <view class="modal-footer">
+    <view class="modal-btn modal-btn-cancel" bindtap="close">取消</view>
+    <view class="modal-btn modal-btn-confirm" bindtap="publish">发布</view>
+  </view>
+</view>

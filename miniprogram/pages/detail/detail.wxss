@@ -1,0 +1,236 @@
+/* ========================================
+   桂乡生活 - 详情页 v2
+   ======================================== */
+
+page {
+  background-color: var(--bg, #F5F6FA);
+  padding: 30rpx 30rpx 120rpx;
+}
+
+.detail-card {
+  background: var(--card-bg, #fff);
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: var(--shadow, 0 4rpx 16rpx rgba(0,0,0,0.06));
+}
+
+.detail-title {
+  font-size: var(--font-h1, 40rpx);
+  font-weight: 700;
+  color: var(--text-primary, #1A1A2E);
+  margin-bottom: 20rpx;
+  line-height: 1.3;
+}
+
+.detail-meta {
+  font-size: var(--font-body, 28rpx);
+  color: var(--text-secondary, #6B7280);
+  line-height: 1.8;
+  margin-bottom: 8rpx;
+}
+.detail-meta view {
+  padding: 6rpx 0;
+}
+
+.detail-divider {
+  height: 2rpx;
+  background: var(--border, #F0F0F0);
+  margin: 24rpx 0;
+}
+
+.detail-images {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin: 20rpx 0;
+}
+
+.detail-images image {
+  width: 100%;
+  border-radius: 16rpx;
+  background: var(--bg, #F5F6FA);
+}
+
+/* ---------- 联系栏 ---------- */
+.contact-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 24rpx;
+  margin-top: 32rpx;
+}
+
+.contact-bar button {
+  flex: 1;
+  max-width: 280rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: var(--primary, #E8A33D);
+  color: #fff;
+  border-radius: 16rpx;
+  font-size: var(--font-body, 28rpx);
+  font-weight: 500;
+  border: none;
+}
+.contact-bar button::after {
+  border: none;
+}
+.contact-bar button:active {
+  opacity: 0.85;
+}
+
+/* ---------- 删除按钮 ---------- */
+.delete-btn {
+  text-align: center;
+  margin-top: 40rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  color: var(--danger, #EF4444);
+}
+
+/* ---------- 加载状态 ---------- */
+.loading-text {
+  text-align: center;
+  padding: 80rpx 0;
+  color: var(--text-placeholder, #9CA3AF);
+  font-size: 28rpx;
+}
+
+/* ===== 评论区 ===== */
+.comments-section {
+  background: var(--card-bg, #fff);
+  border-radius: 24rpx;
+  padding: 28rpx 32rpx;
+  margin-top: 24rpx;
+  box-shadow: var(--shadow, 0 4rpx 16rpx rgba(0,0,0,0.06));
+  padding-bottom: 120rpx; /* 给底部输入框留空间 */
+}
+
+.comments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 2rpx solid var(--border, #F0F0F0);
+}
+
+.comments-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.comments-count {
+  font-size: 24rpx;
+  color: var(--text-placeholder, #9CA3AF);
+}
+
+.comment-item {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 24rpx;
+}
+
+.comment-avatar {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+  background: var(--primary-light, #FFF8E1);
+}
+.comment-avatar image {
+  width: 100%;
+  height: 100%;
+}
+.avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 24rpx;
+  color: var(--primary, #E8A33D);
+}
+
+.comment-body {
+  flex: 1;
+}
+
+.comment-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6rpx;
+}
+
+.comment-nickname {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: var(--primary, #E8A33D);
+}
+
+.comment-time {
+  font-size: 22rpx;
+  color: var(--text-placeholder, #9CA3AF);
+}
+
+.comment-content {
+  font-size: 28rpx;
+  color: var(--text-primary, #1A1A2E);
+  line-height: 1.6;
+}
+
+.comment-empty {
+  text-align: center;
+  padding: 40rpx 0;
+  color: var(--text-placeholder, #9CA3AF);
+  font-size: 26rpx;
+}
+
+/* ---- 底部评论输入框 ---- */
+.comment-input-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: var(--card-bg, #fff);
+  padding: 16rpx 24rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  border-top: 2rpx solid var(--border, #F0F0F0);
+  box-shadow: 0 -4rpx 12rpx rgba(0,0,0,0.04);
+  z-index: 10;
+}
+
+.comment-input {
+  flex: 1;
+  height: 68rpx;
+  line-height: 68rpx;
+  background: var(--bg, #F5F6FA);
+  border-radius: 34rpx;
+  padding: 0 28rpx;
+  font-size: 26rpx;
+  margin-right: 16rpx;
+}
+
+.comment-submit {
+  flex-shrink: 0;
+  height: 68rpx;
+  line-height: 68rpx;
+  padding: 0 32rpx;
+  background: var(--primary, #E8A33D);
+  color: #fff;
+  font-size: 26rpx;
+  border-radius: 34rpx;
+  border: none;
+}
+.comment-submit::after {
+  border: none;
+}
+.comment-submit:active {
+  opacity: 0.85;
+}

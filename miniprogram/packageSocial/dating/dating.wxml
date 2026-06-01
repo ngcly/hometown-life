@@ -1,0 +1,44 @@
+<view class="all">
+  <block wx:for="{{dataList}}" wx:key="_id">
+    <view class="box" bindtap="goDetail" data-id="{{item}}">
+      <view class="box_bottom">
+        <view>
+          <text class="title">To:</text>{{item.to}}
+        </view>
+      </view>
+      <view class="info">
+        <text>{{item.info}}</text>
+      </view>
+      <view class="writer">
+        <text class="title">From:</text>{{item.writer}}
+      </view>
+      <view class="box_bottom" wx:if="{{openid==item._openid}}">
+        <view class="delete" catchtap="deleteItem" data-t="{{item}}">删除</view>
+        <view class="writer">
+          <text style="color:grey;font-size:20rpx">{{item.sendTime}}</text>
+        </view>
+      </view>
+      <view class="writer" wx:else>
+        <text style="color:grey;font-size:20rpx">{{item.sendTime}}</text>
+      </view>
+    </view>
+  </block>
+  <image class="send" src="../../images/send1.png" bindtap="send"></image>
+</view>
+<block wx:if="{{isSend}}">
+  <view>
+    <view class="send_bg"></view>
+    <view class="send_box">
+      <view class="top">💌 我要表白</view>
+      <view class="center">
+        <input placeholder="表白对象（如：隔壁班的小芳）" bindinput="onRecipientInput"></input>
+        <input placeholder="你的名字（如：阿强）" bindinput="onWriterInput"></input>
+        <textarea placeholder="写下你的心里话… 温泉桂乡，等一人共赏" bindinput="onContentInput" fixed="true"></textarea>
+      </view>
+      <view class="send_button">
+        <button class="b1" bindtap="close">取消</button>
+        <button class="b2" bindtap="publish">发布</button>
+      </view>
+    </view>
+  </view>
+</block>

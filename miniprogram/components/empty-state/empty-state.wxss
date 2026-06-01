@@ -1,0 +1,1 @@
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;color:#ccc;font-size:32rpx;padding:40rpx} .empty-state button{margin-top:30rpx;background:#00a8f3;color:white;border-radius:10rpx;font-size:28rpx}
