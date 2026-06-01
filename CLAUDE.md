@@ -22,6 +22,7 @@ Tech stack: WeChat Mini Program (native) + WeChat Cloud Functions + WeChat Cloud
 - **Build/Preview**: Open the project root in WeChat DevTools, which auto-compiles on save
 - **Cloud function deployment**: Right-click a cloud function folder in WeChat DevTools → "Upload and deploy" (上传并部署)
 - **Cloud function dependencies**: `cd cloudfunctions/<name> && npm install` (each cloud function has its own package.json)
+- **Deploy order**: **common must be deployed first** — the other functions (`publish`, `confession`, `login`, `upload`) depend on its shared modules at runtime
 - **The project has no tests, linters, or build scripts** — it's a native WeChat Mini Program with no extra toolchain
 
 ## Project Architecture
@@ -31,11 +32,7 @@ Tech stack: WeChat Mini Program (native) + WeChat Cloud Functions + WeChat Cloud
 ```
 .
 ├── cloudfunctions/               # WeChat Cloud Functions (serverless backend)
-│   ├── common/                   # Shared module (not a standalone function)
-│   │   ├── constants.js          # Collection name whitelist
-│   │   ├── index.js              # Re-exports
-│   │   ├── response.js           # Unified success/error response helpers
-│   │   └── package.json
+│   ├── common/                   # Shared module — deployed separately; others require `./response` and `./constants` from it
 │   ├── login/                    # Get user openid/appid from WeChat
 │   ├── publish/                  # Create posts (items/lost/found collections)
 │   ├── confession/               # Create confession posts (confessions collection)
@@ -48,11 +45,11 @@ Tech stack: WeChat Mini Program (native) + WeChat Cloud Functions + WeChat Cloud
 │   ├── styles/
 │   │   └── shared.wxss           # Shared component styles (cards, buttons, states)
 │   ├── components/               # Reusable components
-│   │   ├── post-card/            # Card component for listing items
-│   │   ├── empty-state/          # Empty state placeholder
+│   │   ├── post-card/            # Card component — props: data, showDelete, showImages, type; events: tap, delete
+│   │   ├── empty-state/          # Empty state — props: hint, showAction, actionText; events: action
 │   │   ├── send-button/          # Floating publish button
 │   │   ├── login-check/          # Login status verification
-│   │   └── image-uploader/       # Image selection and preview
+│   │   └── image-uploader/       # Image selection — props: maxCount, fileIDs; methods: chooseImage, removeImage
 │   ├── pages/                    # Main package pages
 │   │   ├── index/                # Home — greeting, search entry, carousel, 9-grid nav, feed
 │   │   ├── plaza/                # Plaza/square — categorized multi-collection browse with covers
@@ -64,26 +61,15 @@ Tech stack: WeChat Mini Program (native) + WeChat Cloud Functions + WeChat Cloud
 │   │       ├── fetch.js          # Promise wrapper around wx.request (legacy, not widely used)
 │   │       └── util.js           # Date formatting utility
 │   ├── packageLife/              # Subpackage — Lifestyle
-│   │   ├── lost/                 # Lost & found (dual-tab: lost/found swiper)
-│   │   ├── jobs/                 # Part-time jobs
-│   │   ├── food/                 # Food recommendations — inline modal posting
-│   │   ├── travel/               # Travel guides — inline modal posting
-│   │   └── rent/                 # Housing rental — inline modal posting
 │   ├── packageFun/               # Subpackage — Fun & Interest
-│   │   ├── search/               # Full-text search across collections
-│   │   ├── entertainment/        # Entertainment/events — inline modal posting
-│   │   └── story/                # Local stories — inline modal posting
 │   ├── packageService/           # Subpackage — Services
-│   │   ├── publish/              # Post submission form (images → upload → publish cloud function)
-│   │   └── services/             # Convenience service directory
 │   └── packageSocial/            # Subpackage — Social
-│       └── dating/               # Dating/confessions — inline modal posting
 └── project.config.json           # WeChat DevTools project config
 ```
 
 ### Subpackage Configuration
 
-Defined in `app.json` - 4 subpackages for code splitting:
+Defined in `app.json` — 4 subpackages for code splitting:
 
 | Subpackage | Root | Pages | Purpose |
 |---|---|---|---|
@@ -99,39 +85,84 @@ Three bottom tabs:
 - **广场** (Plaza) → `pages/plaza/plaza`
 - **我的** (Mine) → `pages/mine/mine`
 
-### Database Collections (10 + 1)
+### Cloud Function API — Response Format & Conventions
 
-| Collection | Purpose | Posts via |
+All cloud functions return `{ code: 0, data: ... }` on success or `{ code: -1, error: "..." }` on failure, produced by the `wrap(handler)` helper in `cloudfunctions/common/response.js`. The wrap function automatically catches errors and provides `wxContext` (OPENID, APPID, etc.) to the handler.
+
+```
+exports.main = async (event, context) => {
+  return await wrap(async (wxContext) => {
+    // wxContext.OPENID, wxContext.APPID, wxContext.ENV available here
+    return await db.collection(event.room).add({ data: { ... } })
+  })
+}
+```
+
+### Cross-Cutting: Collection Name Mapping
+
+The most error-prone pattern in the codebase is the multi-layered name mapping between URL params, database collections, and display labels. **When adding a new feature type, all of these must be updated in sync:**
+
+1. **`publish` page** (`packageService/publish/publish.js`): URL param `name` → DB collection:
+   - `lostlost` → `lost` collection
+   - `lostfound` → `found` collection
+   - anything else → `items` collection
+
+2. **`plaza` page** (`pages/plaza/plaza.js`): Three parallel maps:
+   - `TYPE_COLLECTION`: UI key (`xianzhi`, `zufang`, `jianzhi`, `biaobai`, `amusement`) → DB collection name
+   - `TYPE_DETAIL_NAME`: UI key → detail page `name` URL param
+   - `TYPE_LABEL_COLORS`: UI key → hex color
+
+3. **`detail` page** (`pages/detail/detail.js`): `COLLECTION_MAP` — URL `name` param → `{ collection, title }`. Handles aliases: both `xianzhi` and `items` map to `items` collection, both `work` and `jobs` map to `jobs`, etc.
+
+4. **`mine` page** (`pages/mine/mine.js`): `USER_COLLECTIONS` array — each entry has `name` (collection), `label`, and `titleKey` (which field to display as the post title, e.g., `'name'`, `'to'`, `'gangwei'`, `'title'`).
+
+5. **Search page** (`packageFun/search/search.js`): `COLLECTIONS` array — each entry specifies which `fields` to regex-search per collection.
+
+6. **Home feed** (`pages/index/index.js`): Hardcoded `collections` array with `name` and `label` — adds `_col` tag for detail page routing.
+
+### Database Collection Field Conventions
+
+All collections share these common fields:
+- `_openid` — owner's WeChat openid (auto-set by cloud functions or manually)
+- `createTime` — creation timestamp (used for sorting across all lists)
+- `sendTime` — formatted display time string
+- `pName`, `pCall`, `pWechat` — contact info (name, phone, WeChat)
+- `name` — item/service title (not all collections use this; see titleKey variations below)
+
+Collection-specific display title fields (used by mine.js `titleKey`):
+| Collection | Title field | Description |
 |---|---|---|
-| `items` | Used/second-hand items (was `xianzhi`) | `publish` cloud function |
-| `lost` | Lost items | `publish` cloud function |
-| `found` | Found items | `publish` cloud function |
-| `confessions` | Dating/confessions (was `biaobai`) | `confession` cloud function |
-| `jobs` | Part-time jobs (was `jianzhi`) | Direct DB insert |
-| `food` | Food recommendations | Direct DB insert |
-| `travel` | Travel guides | Direct DB insert |
-| `rentals` | Housing rental (was `zufang`) | Direct DB insert |
-| `story` | Local stories | Direct DB insert |
-| `entertainment` | Entertainment/events | Direct DB insert |
-| `comments` | Post comments | Direct DB insert |
+| `items` | `name` | Item name |
+| `lost`/`found` | `name` | Item name |
+| `confessions` | `to` | Target/recipient of confession |
+| `jobs` | `gangwei` | Job position title |
+| `food` | `name` | Food name |
+| `travel` | `name` | Travel title |
+| `entertainment` | `name` | Event/activity name |
+| `rentals` | `title` | Rental listing title |
+| `story` | `title` | Story title |
 
-Each collection needs a descending index on `createTime` for paginated list queries. The VALID_COLLECTIONS whitelist is in `cloudfunctions/common/constants.js`.
+### Two Publish Patterns
+
+1. **Image-based** (`packageService/publish/publish.js` → `publish` cloud function): Used for `items`, `lost`, `found`. Flow: pick images → `wx.cloud.uploadFile` to cloud storage (collects `fileIDs`) → call `publish` cloud function with all fields → DB insert. Images are uploaded with timestamp-based cloud paths: `Date.now() + suffix`.
+
+2. **Modal inline** (food, travel, rent, story, entertainment, dating pages): No images. Opens an inline modal form → `db.collection.add()` directly from the frontend (no cloud function). Uses `wx.cloud.database()` directly, not the `db.js` wrapper.
 
 ### Key Patterns
 
-- **Database queries**: Use `pages/utils/db.js` wrappers (`getList`, `getDetail`, `removeItem`, `countWhere`) instead of raw `wx.cloud.database()` calls (exceptions: mine.js counts, food/travel/rent/story/entertainment direct inserts)
-- **Login check**: `auth.checkLogin()` from `pages/utils/auth.js` — returns Promise<boolean>, shows toast if not logged in
-- **Login flow**: `pages/mine/mine.js` triggers `login` cloud function → stores `openid` in `wx.setStorage({key: 'openid'})`
+- **Database queries**: Use `pages/utils/db.js` wrappers (`getList`, `getDetail`, `removeItem`, `countWhere`) instead of raw `wx.cloud.database()` calls (exceptions: mine.js counts via `.count()`, modal posting pages via `.add()`)
+- **Login check**: `auth.checkLogin()` from `pages/utils/auth.js` — reads `wx.getStorage({key: 'login'})`, returns Promise<boolean>, shows toast if not logged in
+- **Login flow**: `pages/mine/mine.js` calls `login` cloud function → stores `openid` in `wx.setStorage({key: 'openid'})`. The response follows the cloud function API format: `result.code === 0` indicates success.
 - **User info storage**: `wx.setStorage({key: 'userInfo', data: {nickName, avatarUrl}})` and `wx.setStorage({key: 'login', data: true})`
 - **Owner check**: Compare `openid === item._openid` to conditionally show delete buttons
 - **Cross-page data passing**: Uses `wx.setStorage`/`wx.getStorage` (keys: `'info'`, `'openid'`, `'userInfo'`, `'login'`) and URL query params for navigation
-- **Image upload flow**: Select images → `wx.cloud.uploadFile` directly (the old `img`/`upload` cloud function exists but current `publish.js` uses direct SDK upload) → collect fileIDs → submit with data
-- **Detail page**: `pages/detail/detail?name=<type>&id=<docId>` — unified view with info, images, contact copy buttons, comments
+- **Detail page**: `pages/detail/detail?name=<type>&id=<docId>` — unified view with info, images, contact copy buttons, comments. The `name` param maps through `COLLECTION_MAP`.
 - **Comment system**: Posts to `comments` collection with `postCollection` and `postId` fields
-- **Search**: `packageFun/search/search` — multi-collection regex search with 300ms debounce
+- **Search**: `packageFun/search/search` — multi-collection regex search with 300ms debounce via `db.RegExp()`. Searches 5 collections (items, lost, found, jobs, confessions) across collection-specific fields.
 - **FAB pattern**: Most list pages have a floating action button for quick posting
 - **Modal posting**: food, travel, rent, story, entertainment, dating use inline modal forms (not separate pages)
-- **Design system**: CSS custom properties in `app.wxss` define gold/osmanthus theme; each page has isolated styles
-- **Pagination**: All list pages use `page`/`pageSize`/`hasMore` pattern with `onReachBottom` infinite scroll
-- **Error handling**: `app.js` has global `onError` handler with user-friendly toast
-- **Localization**: UI copy uses Xianning (咸宁) local dialect expressions like "删哒", "冇得", "桂花信使迷路了"
+- **`_col` convention**: When rendering posts from multiple collections in a single list (home feed, plaza, mine), each item gets a `_col` tag with the collection name, used for detail page routing
+- **Design system**: CSS custom properties in `app.wxss` define gold/osmanthus theme (`--primary: #E8A33D`, `--gold: #F5A623`, etc.); each page has isolated styles
+- **Pagination**: All list pages use `page`/`pageSize`/`hasMore` pattern with `onReachBottom` infinite scroll; `page` starts at 0, increments after each successful load
+- **Error handling**: `app.js` has global `onError` handler with user-friendly toast; each page has local `loadError` state shown via `empty-state` component
+- **Localization**: UI copy uses Xianning (咸宁) local dialect: "删哒" (deleted), "冇得" (none/nope), "桂花信使迷路了" (osmanthus messenger is lost — error message)
